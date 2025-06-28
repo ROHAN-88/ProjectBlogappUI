@@ -15,7 +15,7 @@ export const loginInApiAction = async (validateData: LoginFormValue) => {
 
     if (response.data.accesstoken) {
       cookiesStores.set("accesstoken", response.data.accesstoken, {
-        maxAge: 60 * 60 * 24,
+        maxAge: (60 * 60 * 24) / 2,
         httpOnly: false,
         secure: false,
         path: "/",
@@ -28,7 +28,7 @@ export const loginInApiAction = async (validateData: LoginFormValue) => {
       });
 
       cookiesStores.set("userId", response.data.user._id, {
-        maxAge: 60 * 60 * 24,
+        maxAge: (60 * 60 * 24) / 2,
         httpOnly: false,
         secure: false,
         path: "/",
@@ -121,5 +121,51 @@ export const GetAllPost = async () => {
   } catch (error) {
     console.error("Error", error);
     return { success: false, data: "Cannot Fetch Data" };
+  }
+};
+
+export const getPostOfUser = async () => {
+  try {
+    const response = await blogApiClient.get("/getPostOfUser");
+    if (response.status === 200 || response.status === 201) {
+      return { success: true, data: response.data };
+    }
+  } catch (error) {
+    console.error("Error", error);
+    return { success: false, data: "Could not get Posts" };
+  }
+};
+
+export const GetBlogById = async (id: string) => {
+  try {
+    const response = await blogApiClient.get(`/${id}/getPost`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("");
+    return { success: false, data: "Could not get the Blog Detail" };
+  }
+};
+
+export const PostSavedPost = async (id: number) => {
+  try {
+    const response = await blogApiClient.post(`/${id}/addSavedPost`);
+    if (response.status === 200) {
+      return { success: true, data: "Saved Post" };
+    }
+  } catch (error) {
+    console.error("Error", error);
+    return { success: false, data: "Could Not Saved Post" };
+  }
+};
+
+export const GetSavedPost = async () => {
+  try {
+    const response = await blogApiClient.get("/getSavedPost");
+    if (response.status) {
+      return { success: true, data: response.data };
+    }
+  } catch (error) {
+    console.error("Error", error);
+    return { success: false, data: "Could not Get Saved Post" };
   }
 };

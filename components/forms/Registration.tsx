@@ -19,6 +19,7 @@ import {
 import { Input } from "../ui/input";
 import { registerApiAction } from "@/utils/apiUtils";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -41,7 +42,7 @@ export type RegisterFormValue = z.infer<typeof formSchema>;
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   const form = useForm<RegisterFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,6 +67,7 @@ export default function RegisterForm() {
         toast("Registterer", {
           description: "Registerd",
         });
+        router.push("/login");
       } else {
         // Handle errors correctly by assigning them to specific fields
         if (response.errors) {

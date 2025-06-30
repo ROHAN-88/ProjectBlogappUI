@@ -36,11 +36,6 @@ export default function BlogPage() {
           </TooltipProvider>
         </div>
         <div className="py-5">
-          <h2 className="text-2xl font-semibold mb-4b flex items-center gap-4 mb-4">
-            {" "}
-            <Hexagon size="30px" color="#4682A9" /> Recent Posts
-          </h2>
-
           <Suspense fallback={<PostsSkeleton />}>
             <BlogPosts />
           </Suspense>

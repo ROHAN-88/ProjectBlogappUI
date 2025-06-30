@@ -50,6 +50,10 @@ export default function BlogDetail({ id }: BlogIdProps) {
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
               {blogPost?.title}
             </h1>
+            <Badge>
+              {blogPost?.category?.charAt(0).toUpperCase()}
+              {blogPost?.category.slice(1)}
+            </Badge>
           </div>
 
           {/* Author and Date Info */}

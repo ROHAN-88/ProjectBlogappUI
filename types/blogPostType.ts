@@ -1,3 +1,5 @@
+import { categoryType } from "@/app/(main)/blogs/model";
+
 export type BlogPost = {
   _id?: string;
   title?: string;
@@ -5,6 +7,7 @@ export type BlogPost = {
   imageUrl?: string;
   firstName: string;
   lastName?: string;
+  category: categoryType;
   comment?: string[];
   pictureUrl?: string;
   createdAt: string;

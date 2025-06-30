@@ -7,8 +7,22 @@ export type CloudinaryResult = {
   event: string;
 };
 
+export type categoryType =
+  | "recent"
+  | "sports"
+  | "entertainment"
+  | "travel"
+  | "food"
+  | "fashion"
+  | "fitness"
+  | "health"
+  | "business"
+  | "other";
+
 export type FormDataType = {
   title: string;
   text: string;
+  category: categoryType;
+
   imageUrl: string;
 };

@@ -18,7 +18,6 @@ import CategoryCarousel from "./components/CarosouselCards";
 
 export default function BlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [savedPosts, setSavedPosts] = useState<BlogPost[]>();
 
   const { toast } = useToast();
 
@@ -30,18 +29,6 @@ export default function BlogPosts() {
       }
     };
     getAllPosts();
-  }, []);
-
-  useEffect(() => {
-    const getSavedPost = async () => {
-      const response = await GetSavedPost();
-      if (response?.success === true) {
-        setSavedPosts(response.data);
-      } else {
-        console.error("Could not Get Saved Posts");
-      }
-    };
-    getSavedPost();
   }, []);
 
   // const handleDelete = (id: string, userId: string) => {
@@ -84,82 +71,31 @@ export default function BlogPosts() {
 
   return (
     <>
-      <CategoryCarousel
-        category="recent"
-        label="Recent"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="recent" label="Recent" posts={posts} />
 
-      <CategoryCarousel
-        category="food"
-        label="Food"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="food" label="Food" posts={posts} />
 
-      <CategoryCarousel
-        category="business"
-        label="Business"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="business" label="Business" posts={posts} />
 
-      <CategoryCarousel
-        category="business"
-        label="Business"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="business" label="Business" posts={posts} />
 
       <CategoryCarousel
         category="entertainment"
         label="Entertainment"
         posts={posts}
-        savedPost={savedPosts}
       />
 
-      <CategoryCarousel
-        category="fashion"
-        label="Fashion"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="fashion" label="Fashion" posts={posts} />
 
-      <CategoryCarousel
-        category="fitness"
-        label="Fitness"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="fitness" label="Fitness" posts={posts} />
 
-      <CategoryCarousel
-        category="health"
-        label="Health"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="health" label="Health" posts={posts} />
 
-      <CategoryCarousel
-        category="sports"
-        label="Sports"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="sports" label="Sports" posts={posts} />
 
-      <CategoryCarousel
-        category="travel"
-        label="Travel"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="travel" label="Travel" posts={posts} />
 
-      <CategoryCarousel
-        category="other"
-        label="Others"
-        posts={posts}
-        savedPost={savedPosts}
-      />
+      <CategoryCarousel category="other" label="Others" posts={posts} />
     </>
   );
 }

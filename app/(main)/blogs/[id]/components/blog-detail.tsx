@@ -1,10 +1,20 @@
+import { useBlogContext } from "@/components/providers/BlogProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { BlogPost } from "@/types/blogPostType";
-import { GetBlogById } from "@/utils/apiUtils";
-import { Calendar, User } from "lucide-react";
+import DOMPurify from "dompurify";
+import { GetBlogById, GetSavedPost, PostSavedPost } from "@/utils/apiUtils";
+import {
+  Bookmark,
+  Calendar,
+  Heart,
+  MessageSquareText,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type BlogIdProps = {
   id: string;
@@ -12,11 +22,10 @@ type BlogIdProps = {
 
 export default function BlogDetail({ id }: BlogIdProps) {
   const [blogPost, setBlogPost] = useState<BlogPost>();
-
-  console.log(blogPost);
+  const [savedPosts, setSavedPosts] = useState<BlogPost[]>();
+  const { triggerRefetch, refetch } = useBlogContext();
 
   useEffect(() => {
-    console.log(" dd", id);
     const getDetail = async () => {
       const response = await GetBlogById(id);
       console.log(response);
@@ -25,7 +34,42 @@ export default function BlogDetail({ id }: BlogIdProps) {
       }
     };
     getDetail();
-  }, []);
+  }, [refetch]);
+
+  useEffect(() => {
+    const getSavedPost = async () => {
+      const response = await GetSavedPost();
+      if (response?.success === true) {
+        setSavedPosts(response.data);
+      } else {
+        console.error("Could not Get Saved Posts");
+      }
+    };
+    getSavedPost();
+  }, [refetch]);
+
+  const checkSavedPost = (postId: string) => {
+    if (savedPosts) {
+      for (let i = 0; i < savedPosts.length; i++) {
+        if (savedPosts[i]._id === postId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  const handleSavePost = async (id: string) => {
+    const response = await PostSavedPost(id);
+    if (response?.success === true) {
+      toast(
+        checkSavedPost(blogPost?._id || " ") === true
+          ? "Post UnSaved"
+          : "Post Saved"
+      );
+      triggerRefetch();
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -37,6 +81,12 @@ export default function BlogDetail({ id }: BlogIdProps) {
   const getAuthorInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
   };
+
+  function stripHtmlTags(html: string): string {
+    const div = document.createElement("div");
+    div.innerHTML = DOMPurify.sanitize(html);
+    return div.textContent || "";
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,13 +149,33 @@ export default function BlogDetail({ id }: BlogIdProps) {
             />
           </div>
         </div>
-
+        <div className="flex justify-between items-center m-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleSavePost(blogPost?._id || "")}
+            className="flex justify-around items-center gap-1 "
+          >
+            {checkSavedPost(blogPost?._id || " ") === true ? (
+              <Bookmark className={`h-4 w-4  fill-primary`} />
+            ) : (
+              <Bookmark className={`h-4 w-4  `} />
+            )}
+          </Button>
+          <div className="flex gap-2">
+            <Button variant="ghost">
+              <Heart />
+            </Button>
+            <Button variant="ghost">
+              <MessageSquareText />
+            </Button>
+          </div>
+        </div>
         {/* Blog Content */}
         <div className="prose prose-lg max-w-none dark:prose-invert">
-          <div
-            dangerouslySetInnerHTML={{ __html: blogPost?.text || "" }}
-            className="leading-relaxed"
-          />
+          <div className="text-wrap  break-words text-justify">
+            {stripHtmlTags(blogPost?.text || "")}
+          </div>
         </div>
 
         {/* Footer */}

@@ -17,13 +17,11 @@ export const AuthGuard = ({ children }: Props) => {
         .find((row) => row.startsWith("loggedIn="))
         ?.split("=")[1];
 
-      if (isLoggedIn && isLoggedIn === "True") {
-        router.replace("/");
-
-        setIsLoading(false);
-      } else {
+      if (!isLoggedIn) {
         console.error("Your Token is Expired");
         router.replace("/login");
+        setIsLoading(false);
+      } else {
         setIsLoading(false);
       }
     } catch (error) {

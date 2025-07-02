@@ -7,6 +7,7 @@ export type BlogPost = {
   imageUrl?: string;
   firstName: string;
   lastName?: string;
+  likes?: string[];
   category: categoryType;
   comment?: string[];
   pictureUrl?: string;

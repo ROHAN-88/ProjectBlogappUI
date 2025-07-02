@@ -3,6 +3,7 @@ import type React from "react";
 import "./globals.css";
 import { AuthGuard } from "@/components/providers/auth-provider";
 import { Toaster } from "sonner";
+import { BlogProvider } from "@/components/providers/BlogProvider";
 
 export default function RootLayout({
   children,
@@ -15,7 +16,7 @@ export default function RootLayout({
         <AuthGuard>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster />
-            {children}
+            <BlogProvider>{children}</BlogProvider>
           </ThemeProvider>
         </AuthGuard>
       </body>

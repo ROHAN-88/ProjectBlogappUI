@@ -15,15 +15,9 @@ type propsTypes = {
   category: categoryType;
   label: string;
   posts: BlogPost[];
-  savedPost: BlogPost[] | undefined;
 };
 
-const CategoryCarousel = ({
-  category,
-  label,
-  posts,
-  savedPost,
-}: propsTypes) => {
+const CategoryCarousel = ({ category, label, posts }: propsTypes) => {
   const Postss = posts?.filter((post) => post.category === category);
   const isRecent = category === "recent";
   const hasFilteredPosts = Postss.length > 0;
@@ -42,7 +36,7 @@ const CategoryCarousel = ({
               {renderPosts.map((post) => (
                 <CarouselItem key={post._id} className="basis-1/4">
                   <Link href={`/blogs/${post._id}`}>
-                    <BlogCard data={post} savedPost={savedPost} />
+                    <BlogCard data={post} />
                   </Link>
                 </CarouselItem>
               ))}

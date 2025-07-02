@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 import BlogDetail from "./components/blog-detail";
 
 type PageProps = {
@@ -10,8 +10,8 @@ type PageProps = {
 };
 
 const Page = ({ params }: PageProps) => {
-  console.log("paramas", params.id);
-  return <BlogDetail id={params.id} />;
+  const { id } = params;
+  return <BlogDetail id={id} />;
 };
 
 export default Page;

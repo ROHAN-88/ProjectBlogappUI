@@ -146,11 +146,11 @@ export const GetBlogById = async (id: string) => {
   }
 };
 
-export const PostSavedPost = async (id: number) => {
+export const PostSavedPost = async (id: string) => {
   try {
-    const response = await blogApiClient.post(`/${id}/addSavedPost`);
+    const response = await blogApiClient.post(`/${id}/SavePost`);
     if (response.status === 200) {
-      return { success: true, data: "Saved Post" };
+      return { success: true, data: "Post Saved" };
     }
   } catch (error) {
     console.error("Error", error);

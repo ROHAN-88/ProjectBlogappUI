@@ -18,15 +18,16 @@ import { AddPostApi } from "@/utils/apiUtils";
 import axios from "axios";
 import { ImagePlus, Loader2 } from "lucide-react";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import ReactSimpleWysiwyg from "react-simple-wysiwyg";
 import { toast } from "sonner";
 import { categoryType, FormDataType } from "../model";
-
 const CreateBlog = () => {
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<FormDataType>();
 
@@ -137,11 +138,18 @@ const CreateBlog = () => {
 
           <div className="space-y-2">
             <Label htmlFor="text">Content</Label>
-            <Textarea
-              id="text"
-              placeholder="Write your post content here..."
-              rows={5}
-              {...register("text", { required: "Content is required" })}
+            <Controller
+              name="text"
+              control={control}
+              rules={{ required: "Content is required" }}
+              render={({ field }) => (
+                <ReactSimpleWysiwyg
+                  id="text"
+                  placeholder="Write your thoughts"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+              )}
             />
             {errors.text && (
               <p className="text-sm text-destructive">{errors.text.message}</p>

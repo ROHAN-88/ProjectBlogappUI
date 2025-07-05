@@ -7,7 +7,6 @@ import Link from "next/link";
 import { z } from "zod";
 
 import { cn } from "@/lib/utils";
-
 import { Button, buttonVariants } from "../ui/button";
 import {
   Form,
@@ -26,6 +25,9 @@ import { toast } from "@/hooks/use-toast";
 import Spinner from "../common/Spinner";
 import { loginInApiAction } from "@/utils/apiUtils";
 
+// 👁️ Icons for show/hide password
+import { Eye, EyeOff } from "lucide-react";
+
 const formSchema = z.object({
   email: z
     .string({ required_error: "Email cannot be blank" })
@@ -37,8 +39,9 @@ export type LoginFormValue = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👁️ state for toggle
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [initialValues, setInitialValues] = useState<LoginFormValue>({
     email: "",
     password: "",
@@ -69,6 +72,7 @@ export default function LoginForm() {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       <Form {...form}>
@@ -76,6 +80,7 @@ export default function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-2"
         >
+          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
@@ -94,6 +99,7 @@ export default function LoginForm() {
             )}
           />
 
+          {/* Password Field with Show/Hide */}
           <FormField
             control={form.control}
             name="password"
@@ -101,19 +107,35 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="********" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="********"
+                      type={showPassword ? "text" : "password"}
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* Submit Button */}
           <Button disabled={isLoading} className="ml-auto w-full" type="submit">
             {isLoading ? <Spinner sm /> : "Login"}
           </Button>
         </form>
       </Form>
 
+      {/* Register Link */}
       <div className="text-center">
         <p className="text-sm">
           Don&apos;t have an account?

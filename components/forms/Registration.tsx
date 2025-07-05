@@ -21,17 +21,39 @@ import { registerApiAction } from "@/utils/apiUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+import { Eye, EyeOff } from "lucide-react";
+
 const formSchema = z
   .object({
     email: z
       .string({ required_error: "Email cannot be blank" })
-      .email({ message: "Invalid Email" }),
+      .email({ message: "Invalid Email format" })
+      .refine((val) => val.includes("@") && val.endsWith(".com"), {
+        message: "Email must include '@' and end with '.com'",
+      }),
     password: z
       .string({ required_error: "Password cannot be blank" })
-      .min(8, { message: "Password must be 8 character" }),
-    confirm_password: z.string({ required_error: "Password cannot be blank" }),
-    firstName: z.string({ required_error: "Fistname Cannot be Blank" }),
-    lastName: z.string({ required_error: "Fistname Cannot be Blank" }),
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .refine((val) => /[a-z]/.test(val), {
+        message: "Password must include at least one lowercase letter",
+      })
+      .refine((val) => /[A-Z]/.test(val), {
+        message: "Password must include at least one uppercase letter",
+      })
+      .refine((val) => /[^a-zA-Z0-9]/.test(val), {
+        message: "Password must include at least one special character",
+      }),
+    confirm_password: z.string({ required_error: "Please confirm password" }),
+    firstName: z
+      .string({ required_error: "First name cannot be blank" })
+      .refine((val) => !/\d/.test(val), {
+        message: "First name cannot contain numbers",
+      }),
+    lastName: z
+      .string({ required_error: "Last name cannot be blank" })
+      .refine((val) => !/\d/.test(val), {
+        message: "Last name cannot contain numbers",
+      }),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords don't match",
@@ -42,7 +64,10 @@ export type RegisterFormValue = z.infer<typeof formSchema>;
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+
   const form = useForm<RegisterFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,27 +82,22 @@ export default function RegisterForm() {
   const onSubmit = async (values: RegisterFormValue) => {
     try {
       setIsLoading(true);
-
-      // Clear previous errors before submitting
       form.clearErrors();
       const validatedData = formSchema.parse(values);
 
       const response = await registerApiAction(validatedData);
       if (response.success) {
-        toast("Registterer", {
-          description: "Registerd",
+        toast("Registered successfully", {
+          description: "Your account has been created.",
         });
         router.push("/login");
-      } else {
-        // Handle errors correctly by assigning them to specific fields
-        if (response.errors) {
-          Object.entries(response.errors).forEach(([field, message]) => {
-            form.setError(field as keyof RegisterFormValue, {
-              type: "server",
-              message: Array.isArray(message) ? message.join(", ") : message,
-            });
+      } else if (response.errors) {
+        Object.entries(response.errors).forEach(([field, message]) => {
+          form.setError(field as keyof RegisterFormValue, {
+            type: "server",
+            message: Array.isArray(message) ? message.join(", ") : message,
           });
-        }
+        });
       }
     } catch {
       form.setError("email", {
@@ -101,7 +121,7 @@ export default function RegisterForm() {
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Fist Name</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter your First Name" {...field} />
                   </FormControl>
@@ -124,6 +144,7 @@ export default function RegisterForm() {
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="email"
@@ -142,6 +163,7 @@ export default function RegisterForm() {
             )}
           />
 
+          {/* Password Field with visibility toggle */}
           <FormField
             control={form.control}
             name="password"
@@ -149,13 +171,28 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="********" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="********"
+                      type={showPassword ? "text" : "password"}
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          {/* Confirm Password Field with toggle */}
           <FormField
             control={form.control}
             name="confirm_password"
@@ -163,7 +200,25 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="********" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="********"
+                      type={showConfirmPassword ? "text" : "password"}
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

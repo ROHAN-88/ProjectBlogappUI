@@ -10,13 +10,34 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { BlogPost } from "@/types/blogPostType";
 import { userTypes } from "@/types/userTypes";
-import { getPostOfUser, GetSavedPost, GetUserDetail } from "@/utils/apiUtils";
+import {
+  getPostOfUser,
+  GetSavedPost,
+  GetUserDetail,
+  PostDelete,
+} from "@/utils/apiUtils";
 import { BookmarkIcon, Grid, MessageSquare, Settings } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useBlogContext } from "@/components/providers/BlogProvider";
 
 export default function ProfilePage({ params }: { params: { id: string } }) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [savedPosts, setSavedPosts] = useState<BlogPost[]>([]);
   const [profileUser, setProfileUser] = useState<userTypes>();
+  const [selectedPostId, setSelectedPostId] = useState("");
+
+  const { triggerRefetch, refetch } = useBlogContext();
 
   const isUserProfile = document.cookie
     .split("; ")
@@ -60,8 +81,17 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
       }
     };
     userPostData();
-  }, []);
+  }, [refetch]);
 
+  const handelDelete = async (id: string) => {
+    const response = await PostDelete(id);
+    if (response?.success === true) {
+      triggerRefetch();
+      toast(response.data);
+    } else {
+      toast(response?.data);
+    }
+  };
   if (!profileUser) {
     return (
       <div className="container mx-auto py-8 px-4">Loading profile...</div>
@@ -85,7 +115,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
             <h1 className="text-2xl font-semibold">{profileUser.fullName}</h1>
-            {isUserProfile === profileUser.email ? (
+            {/* {isUserProfile === profileUser.email ? (
               <Button
                 variant="outline"
                 size="sm"
@@ -101,26 +131,26 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                   <MessageSquare className="h-4 w-4" />
                 </Button>
               </div>
-            )}
+            )} */}
           </div>
 
           <div className="flex justify-center md:justify-start gap-6 mb-4">
             <div className="text-center">
-              {/* <span className="font-semibold">{profileUser.postsCount}</span> */}
+              <span className="font-semibold">11</span>
               <p className="text-sm text-muted-foreground">posts</p>
             </div>
-            <div className="text-center">
+            {/* <div className="text-center">
               <span className="font-semibold">
-                {/* {profileUser.followersCount} */}
+                {profileUser.followersCount}
               </span>
               <p className="text-sm text-muted-foreground">followers</p>
             </div>
             <div className="text-center">
               <span className="font-semibold">
-                {/* {profileUser.followingCount} */}
+                {profileUser.followingCount}
               </span>
               <p className="text-sm text-muted-foreground">following</p>
-            </div>
+            </div>*/}
           </div>
 
           <div className="space-y-2">
@@ -154,52 +184,89 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
         </TabsList>
 
         <TabsContent value="posts" className="mt-6">
-          {posts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {posts.map((post) => (
-                // <Link href={`/blog/post/${post.id}`} key={post.id}>
-                <div className="relative aspect-square overflow-hidden rounded-md hover:opacity-90 transition-opacity">
-                  <Card className="relative w-full h-full overflow-hidden group cursor-pointer rounded-xl">
-                    {/* Background Image */}
-                    <Image
-                      src={post.imageUrl || "/placeholder.svg"}
-                      alt={post.title || " "}
-                      fill
-                      className="object-cover"
-                    />
+          <AlertDialog>
+            {posts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {posts.map((post) => (
+                  <div
+                    key={post._id}
+                    className="relative aspect-square overflow-hidden rounded-md hover:opacity-90 transition-opacity"
+                  >
+                    <Card className="relative w-full h-full overflow-hidden group cursor-pointer rounded-xl">
+                      {/* Image */}
+                      <Image
+                        src={post.imageUrl || "/placeholder.svg"}
+                        alt={post.title || " "}
+                        fill
+                        className="object-cover"
+                      />
 
-                    {/* Overlay (hidden by default, visible on hover) */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300  flex flex-col justify-center items-center  text-center">
-                      <h2 className="text-2xl font-bold">{post.title}</h2>
-                      <p className="text-sm mb-6">
-                        {post.text.split(" ").slice(0, 15).join(" ")} ...
-                      </p>
-                      <div className="flex gap-2">
-                        <Button className=" px-4 py-2 ">Read</Button>
-                        <Button variant="destructive">Delete</Button>
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center text-center">
+                        <h2 className="text-2xl font-bold">{post.title}</h2>
+                        <p className="text-sm mb-6">
+                          {post.text.split(" ").slice(0, 15).join(" ")} ...
+                        </p>
+                        <div className="flex gap-2">
+                          <Link href={`/blogs/${post._id}`}>
+                            <Button className="px-4 py-2">Read</Button>
+                          </Link>
+
+                          {/* Trigger dialog and set selected post */}
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="destructive"
+                              onClick={() => setSelectedPostId(post?._id || "")}
+                            >
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </div>
-                // </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-10">
-              <p className="text-muted-foreground">No posts yet.</p>
-              {isUserProfile === profileUser.email && (
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">No posts yet.</p>
                 <Button className="mt-4" asChild>
-                  <Link href="/blog">Create Your First Post</Link>
+                  <Link href="/blogs">Create Your First Post</Link>
                 </Button>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+
+            {/* Shared Dialog for Deletion */}
+            <AlertDialogContent className="bg-[#3C3D37]">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. It will permanently delete the
+                  post.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-[#686D76]">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    if (selectedPostId) {
+                      handelDelete(selectedPostId);
+                      setSelectedPostId(""); // reset after action
+                    }
+                  }}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </TabsContent>
 
         <TabsContent value="saved" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {savedPosts.map((post) => (
-              // <Link href={`/blog/post/${post.id}`} key={post.id}>
               <div className="relative aspect-square overflow-hidden rounded-md hover:opacity-90 transition-opacity">
                 <Card className="relative w-full h-full overflow-hidden group cursor-pointer rounded-xl">
                   {/* Background Image */}
@@ -211,19 +278,19 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                   />
 
                   {/* Overlay (hidden by default, visible on hover) */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300  flex flex-col justify-center items-center  text-center">
+                  <div className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300  flex flex-col justify-center items-center  text-center">
                     <h2 className="text-2xl font-bold">{post.title}</h2>
                     <p className="text-sm mb-6">
                       {post.text.split(" ").slice(0, 15).join(" ")} ...
                     </p>
                     <div className="flex gap-2">
-                      <Button className=" px-4 py-2 ">Read</Button>
-                      <Button variant="destructive">Delete</Button>
+                      <Link href={`/blogs/${post._id}`} key={post._id}>
+                        <Button className=" px-4 py-2 ">Read</Button>
+                      </Link>
                     </div>
                   </div>
                 </Card>
               </div>
-              // </Link>
             ))}
           </div>
           {/* ) : (

@@ -158,6 +158,18 @@ export const PostSavedPost = async (id: string) => {
   }
 };
 
+export const PostDelete = async (id: string) => {
+  try {
+    const response = await blogApiClient.delete(`/${id}/deletePost`);
+    if (response.status === 200) {
+      return { success: true, data: "Post Deleted" };
+    }
+  } catch (error) {
+    console.log("Error", error);
+    return { success: false, data: "Could not Delete" };
+  }
+};
+
 export const GetSavedPost = async () => {
   try {
     const response = await blogApiClient.get("/getSavedPost");
@@ -167,5 +179,16 @@ export const GetSavedPost = async () => {
   } catch (error) {
     console.error("Error", error);
     return { success: false, data: "Could not Get Saved Post" };
+  }
+};
+
+export const PostLike = async (id: string) => {
+  try {
+    const response = await blogApiClient.post(`${id}/like`);
+    if (response.status == 200) {
+      return { success: true, data: response.data };
+    }
+  } catch (error: any) {
+    return { success: false, data: { message: error.message } };
   }
 };

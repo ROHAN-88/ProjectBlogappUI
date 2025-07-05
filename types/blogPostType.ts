@@ -1,5 +1,11 @@
 import { categoryType } from "@/app/(main)/blogs/model";
 
+export type likeType = {
+  message: string;
+  likesCount: number;
+  likedUsers: string[];
+};
+
 export type BlogPost = {
   _id?: string;
   title?: string;
@@ -7,7 +13,7 @@ export type BlogPost = {
   imageUrl?: string;
   firstName: string;
   lastName?: string;
-  likes?: string[];
+  likes?: likeType;
   category: categoryType;
   comment?: string[];
   pictureUrl?: string;

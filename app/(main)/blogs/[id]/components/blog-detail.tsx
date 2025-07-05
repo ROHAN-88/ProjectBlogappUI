@@ -2,9 +2,14 @@ import { useBlogContext } from "@/components/providers/BlogProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BlogPost } from "@/types/blogPostType";
+import { BlogPost, likeType } from "@/types/blogPostType";
 import DOMPurify from "dompurify";
-import { GetBlogById, GetSavedPost, PostSavedPost } from "@/utils/apiUtils";
+import {
+  GetBlogById,
+  GetSavedPost,
+  PostLike,
+  PostSavedPost,
+} from "@/utils/apiUtils";
 import {
   Bookmark,
   Calendar,
@@ -15,6 +20,7 @@ import {
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import Comments from "./Comments";
 
 type BlogIdProps = {
   id: string;
@@ -23,7 +29,34 @@ type BlogIdProps = {
 export default function BlogDetail({ id }: BlogIdProps) {
   const [blogPost, setBlogPost] = useState<BlogPost>();
   const [savedPosts, setSavedPosts] = useState<BlogPost[]>();
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [isLikedUser, setIsLikedUser] = useState<boolean>(false);
+
   const { triggerRefetch, refetch } = useBlogContext();
+  const userID = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("userId"))
+    ?.split("=")[1];
+  console.log(blogPost);
+
+  useEffect(() => {
+    const data = blogPost?.likes;
+    setLikeCount(data?.length);
+    const isLiked = data?.includes(userID) || false;
+    console.log(isLiked);
+    if (isLiked === true) {
+      setIsLikedUser(true);
+    } else {
+      setIsLikedUser(false);
+    }
+  }, [refetch, blogPost]);
+
+  const handelLikes = async () => {
+    const response = await PostLike(blogPost?._id || "");
+    if (response?.success === true) {
+      triggerRefetch();
+    }
+  };
 
   useEffect(() => {
     const getDetail = async () => {
@@ -81,12 +114,6 @@ export default function BlogDetail({ id }: BlogIdProps) {
   const getAuthorInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
   };
-
-  function stripHtmlTags(html: string): string {
-    const div = document.createElement("div");
-    div.innerHTML = DOMPurify.sanitize(html);
-    return div.textContent || "";
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -163,18 +190,31 @@ export default function BlogDetail({ id }: BlogIdProps) {
             )}
           </Button>
           <div className="flex gap-2">
-            <Button variant="ghost">
-              <Heart />
+            <Button variant="ghost" onClick={() => handelLikes()}>
+              {isLikedUser === true ? (
+                <Heart className={`h-4 w-4  fill-primary`} />
+              ) : (
+                <Heart className={`h-4 w-4 `} />
+              )}
+
+              {likeCount}
             </Button>
-            <Button variant="ghost">
-              <MessageSquareText />
-            </Button>
+            <a href="#comments">
+              <Button variant="ghost">
+                <MessageSquareText />
+              </Button>
+            </a>
           </div>
         </div>
         {/* Blog Content */}
         <div className="prose prose-lg max-w-none dark:prose-invert">
           <div className="text-wrap  break-words text-justify">
-            {stripHtmlTags(blogPost?.text || "")}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(blogPost?.text || " "),
+              }}
+              className="rounded p-2 text-justify"
+            />
           </div>
         </div>
 
@@ -208,6 +248,9 @@ export default function BlogDetail({ id }: BlogIdProps) {
           </div>
         </footer>
       </article>
+      <div id="comments">
+        <Comments />
+      </div>
     </div>
   );
 }

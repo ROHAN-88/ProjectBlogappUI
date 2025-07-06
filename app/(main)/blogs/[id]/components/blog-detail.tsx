@@ -37,13 +37,11 @@ export default function BlogDetail({ id }: BlogIdProps) {
     .split("; ")
     .find((row) => row.startsWith("userId"))
     ?.split("=")[1];
-  console.log(blogPost);
 
   useEffect(() => {
     const data = blogPost?.likes;
     setLikeCount(data?.length);
     const isLiked = data?.includes(userID) || false;
-    console.log(isLiked);
     if (isLiked === true) {
       setIsLikedUser(true);
     } else {
@@ -61,7 +59,6 @@ export default function BlogDetail({ id }: BlogIdProps) {
   useEffect(() => {
     const getDetail = async () => {
       const response = await GetBlogById(id);
-      console.log(response);
       if (response?.success == true) {
         setBlogPost(response.data);
       }
@@ -247,10 +244,10 @@ export default function BlogDetail({ id }: BlogIdProps) {
             </div>
           </div>
         </footer>
+        <div id="comments" className="mt-10">
+          <Comments blogData={blogPost} />
+        </div>
       </article>
-      <div id="comments">
-        <Comments />
-      </div>
     </div>
   );
 }

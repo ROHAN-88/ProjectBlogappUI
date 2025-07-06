@@ -5,7 +5,13 @@ export type likeType = {
   likesCount: number;
   likedUsers: string[];
 };
-
+export type commentType = {
+  userID: string;
+  text: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 export type BlogPost = {
   _id?: string;
   title?: string;
@@ -15,7 +21,7 @@ export type BlogPost = {
   lastName?: string;
   likes?: likeType;
   category: categoryType;
-  comment?: string[];
+  comment?: commentType[];
   pictureUrl?: string;
   createdAt: string;
   updatedAt?: string;

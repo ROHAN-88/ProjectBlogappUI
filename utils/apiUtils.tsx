@@ -6,6 +6,7 @@ import { RegisterFormValue } from "@/components/forms/Registration";
 import blogApiClient from "@/config/apiConfig";
 import { AxiosError } from "axios";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const loginInApiAction = async (validateData: LoginFormValue) => {
   console.log("api Login", validateData);
@@ -54,6 +55,19 @@ export const loginInApiAction = async (validateData: LoginFormValue) => {
     };
   }
 };
+
+export async function logoutApiAction() {
+  const cookiesStore = cookies();
+
+  (await cookiesStore).delete("accesstoken");
+  (await cookiesStore).delete("userId");
+  (await cookiesStore).delete("UserEmail");
+  (await cookiesStore).delete("loggedIn");
+
+  // Optional: delay or do cleanup if needed
+
+  redirect("/login");
+}
 
 export const registerApiAction = async (validatedData: RegisterFormValue) => {
   try {
@@ -190,5 +204,20 @@ export const PostLike = async (id: string) => {
     }
   } catch (error: any) {
     return { success: false, data: { message: error.message } };
+  }
+};
+
+export const PostComments = async (id: string, value: string) => {
+  console.log(id, value);
+  try {
+    const response = await blogApiClient.post(`/${id}/comments`, {
+      text: value,
+    });
+
+    if (response.status === 200) {
+      return { success: true, data: "Comment Posted" };
+    }
+  } catch (error) {
+    console.log("Error", error);
   }
 };

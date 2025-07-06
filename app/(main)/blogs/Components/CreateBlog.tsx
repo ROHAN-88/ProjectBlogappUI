@@ -22,6 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import ReactSimpleWysiwyg from "react-simple-wysiwyg";
 import { toast } from "sonner";
 import { categoryType, FormDataType } from "../model";
+
 const CreateBlog = () => {
   const {
     register,

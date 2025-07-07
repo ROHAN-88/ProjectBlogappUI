@@ -35,8 +35,8 @@ const BlogCard = ({ data }: propsType) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <CardContent className="space-y-4 pt-4">
-        <div className="flex justify-between items-center h-[40px]">
-          <h3 className="font-semibold text-lg ">{post?.title}</h3>
+        <div className="flex justify-between items-center h-[50px]">
+          <h3 className="font-semibold text-base ">{post?.title}</h3>
 
           <Badge>
             {post?.category?.charAt(0).toUpperCase()}

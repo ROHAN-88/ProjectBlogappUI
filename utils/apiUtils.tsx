@@ -113,6 +113,17 @@ export const GetUserDetail = async () => {
   }
 };
 
+export const GetUserDetailById = async (id: string) => {
+  try {
+    const response = await blogApiClient.get(`/${id}/userDetail`);
+    if (response.status === 200) {
+      return { success: true, data: response.data };
+    }
+  } catch (error) {
+    console.error("error");
+    return { success: false, data: "User not found" };
+  }
+};
 export const AddPostApi = async (value: FormDataType) => {
   try {
     const response = await blogApiClient.post("/addPost", value);
@@ -159,7 +170,15 @@ export const GetBlogById = async (id: string) => {
     return { success: false, data: "Could not get the Blog Detail" };
   }
 };
-
+export const GetPostByUId = async (id: string) => {
+  try {
+    const response = await blogApiClient.get(`/${id}/getPostofUserById`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("");
+    return { success: false, data: "Could not get the Blog Detail" };
+  }
+};
 export const PostSavedPost = async (id: string) => {
   try {
     const response = await blogApiClient.post(`/${id}/SavePost`);
@@ -184,9 +203,21 @@ export const PostDelete = async (id: string) => {
   }
 };
 
-export const GetSavedPost = async () => {
+export const GetSavedPost = async (id: string) => {
   try {
-    const response = await blogApiClient.get("/getSavedPost");
+    const response = await blogApiClient.get(`/${id}/getSavedPost`);
+    if (response.status) {
+      return { success: true, data: response.data };
+    }
+  } catch (error) {
+    console.error("Error", error);
+    return { success: false, data: "Could not Get Saved Post" };
+  }
+};
+
+export const GetAllSavedPost = async () => {
+  try {
+    const response = await blogApiClient.get(`/getAllSavedPost`);
     if (response.status) {
       return { success: true, data: response.data };
     }

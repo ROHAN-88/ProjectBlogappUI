@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BlogPost, likeType } from "@/types/blogPostType";
 import DOMPurify from "dompurify";
 import {
+  GetAllSavedPost,
   GetBlogById,
   GetSavedPost,
   PostLike,
@@ -21,6 +22,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Comments from "./Comments";
+import Link from "next/link";
 
 type BlogIdProps = {
   id: string;
@@ -68,7 +70,7 @@ export default function BlogDetail({ id }: BlogIdProps) {
 
   useEffect(() => {
     const getSavedPost = async () => {
-      const response = await GetSavedPost();
+      const response = await GetAllSavedPost();
       if (response?.success === true) {
         setSavedPosts(response.data);
       } else {
@@ -131,34 +133,36 @@ export default function BlogDetail({ id }: BlogIdProps) {
           </div>
 
           {/* Author and Date Info */}
-          <div className="flex items-center gap-4 mb-8">
-            <Avatar className="h-12 w-12">
-              <AvatarImage
-                src="/placeholder.svg"
-                alt={`${blogPost?.firstName} ${blogPost?.lastName}`}
-              />
-              <AvatarFallback>
-                {getAuthorInitials(
-                  blogPost?.firstName || "",
-                  blogPost?.lastName || ""
-                )}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span className="font-medium">
-                  {(blogPost?.firstName || "", blogPost?.lastName || "")}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <time dateTime={blogPost?.createdAt}>
-                  {formatDate(blogPost?.createdAt || "")}
-                </time>
+          <Link href={`/profile/${blogPost?.userId}`}>
+            <div className="flex items-center gap-4 mb-8">
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  src="/placeholder.svg"
+                  alt={`${blogPost?.firstName} ${blogPost?.lastName}`}
+                />
+                <AvatarFallback>
+                  {getAuthorInitials(
+                    blogPost?.firstName || "",
+                    blogPost?.lastName || ""
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  <span className="font-medium">
+                    {(blogPost?.firstName || "", blogPost?.lastName || "")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <time dateTime={blogPost?.createdAt}>
+                    {formatDate(blogPost?.createdAt || "")}
+                  </time>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         </header>
 
         {/* Featured Image */}

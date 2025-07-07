@@ -5,19 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-import { Card } from "@/components/ui/card";
-import { BlogPost } from "@/types/blogPostType";
-import { userTypes } from "@/types/userTypes";
-import {
-  getPostOfUser,
-  GetSavedPost,
-  GetUserDetail,
-  PostDelete,
-} from "@/utils/apiUtils";
-import { BookmarkIcon, Grid, MessageSquare, Settings } from "lucide-react";
-import { toast } from "sonner";
+import { useBlogContext } from "@/components/providers/BlogProvider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,16 +19,32 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useBlogContext } from "@/components/providers/BlogProvider";
+import { Card } from "@/components/ui/card";
+import { BlogPost } from "@/types/blogPostType";
+import { userTypes } from "@/types/userTypes";
+import {
+  GetPostByUId,
+  GetSavedPost,
+  GetUserDetailById,
+  PostDelete,
+} from "@/utils/apiUtils";
+import DOMPurify from "dompurify";
+import { BookmarkIcon, Grid, MessageSquare, Settings } from "lucide-react";
+import { toast } from "sonner";
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
+export default function ProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [savedPosts, setSavedPosts] = useState<BlogPost[]>([]);
   const [profileUser, setProfileUser] = useState<userTypes>();
   const [selectedPostId, setSelectedPostId] = useState("");
-
   const { triggerRefetch, refetch } = useBlogContext();
-
+  console.log(savedPosts);
   const isUserProfile = document.cookie
     .split("; ")
     .find((row) => row.startsWith("UserEmail"))
@@ -47,7 +53,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
   // Load profile data - separate from posts loading
   useEffect(() => {
     const getUserDetail = async () => {
-      const userDetail = await GetUserDetail();
+      const userDetail = await GetUserDetailById(id);
       if (userDetail?.success === true) {
         setProfileUser(userDetail.data);
       }
@@ -58,7 +64,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
   // Load posts separately from profile data
   useEffect(() => {
     const getSavedPost = async () => {
-      const response = await GetSavedPost();
+      const response = await GetSavedPost(id);
       if (response?.success === true) {
         setSavedPosts(response.data);
       } else {
@@ -72,7 +78,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const userPostData = async () => {
       try {
-        const response = await getPostOfUser();
+        const response = await GetPostByUId(id);
         if (response?.success === true) {
           setPosts(response.data);
         }
@@ -98,6 +104,11 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
     );
   }
 
+  function stripHtmlTags(html: string): string {
+    const div = document.createElement("div");
+    div.innerHTML = DOMPurify.sanitize(html);
+    return div.textContent || "";
+  }
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Profile Header */}
@@ -115,7 +126,8 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
             <h1 className="text-2xl font-semibold">{profileUser.fullName}</h1>
-            {/* {isUserProfile === profileUser.email ? (
+
+            {decodeURIComponent(isUserProfile || "") === profileUser.email ? (
               <Button
                 variant="outline"
                 size="sm"
@@ -131,7 +143,7 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                   <MessageSquare className="h-4 w-4" />
                 </Button>
               </div>
-            )} */}
+            )}
           </div>
 
           <div className="flex justify-center md:justify-start gap-6 mb-4">
@@ -205,7 +217,11 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                       <div className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center text-center">
                         <h2 className="text-2xl font-bold">{post.title}</h2>
                         <p className="text-sm mb-6">
-                          {post.text.split(" ").slice(0, 15).join(" ")} ...
+                          {stripHtmlTags(post.text)
+                            .split(" ")
+                            .slice(0, 15)
+                            .join(" ") + "..."}
+                          {/* {post.text.split(" ").slice(0, 15).join(" ")} ... */}
                         </p>
                         <div className="flex gap-2">
                           <Link href={`/blogs/${post._id}`}>
@@ -213,14 +229,19 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                           </Link>
 
                           {/* Trigger dialog and set selected post */}
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="destructive"
-                              onClick={() => setSelectedPostId(post?._id || "")}
-                            >
-                              Delete
-                            </Button>
-                          </AlertDialogTrigger>
+                          {decodeURIComponent(isUserProfile || "") ===
+                            profileUser.email && (
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                onClick={() =>
+                                  setSelectedPostId(post?._id || "")
+                                }
+                              >
+                                Delete
+                              </Button>
+                            </AlertDialogTrigger>
+                          )}
                         </div>
                       </div>
                     </Card>
@@ -281,7 +302,10 @@ export default function ProfilePage({ params }: { params: { id: string } }) {
                   <div className="absolute inset-0 bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300  flex flex-col justify-center items-center  text-center">
                     <h2 className="text-2xl font-bold">{post.title}</h2>
                     <p className="text-sm mb-6">
-                      {post.text.split(" ").slice(0, 15).join(" ")} ...
+                      {stripHtmlTags(post.text)
+                        .split(" ")
+                        .slice(0, 15)
+                        .join(" ") + "..."}
                     </p>
                     <div className="flex gap-2">
                       <Link href={`/blogs/${post._id}`} key={post._id}>

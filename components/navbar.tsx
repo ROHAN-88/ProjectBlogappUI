@@ -128,7 +128,9 @@ export function Navbar() {
                 <Link href={`/profile/${user?.id}`}>
                   <DropdownMenuItem>My Account</DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+                <Link href="/editProfile">
+                  <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={() => handleLogout()}>

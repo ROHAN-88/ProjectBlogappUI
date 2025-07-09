@@ -16,6 +16,7 @@ import {
   Calendar,
   Heart,
   MessageSquareText,
+  Pencil,
   User,
 } from "lucide-react";
 import Image from "next/image";
@@ -23,6 +24,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Comments from "./Comments";
 import Link from "next/link";
+import { profile } from "console";
+import { url } from "inspector";
 
 type BlogIdProps = {
   id: string;
@@ -35,6 +38,7 @@ export default function BlogDetail({ id }: BlogIdProps) {
   const [isLikedUser, setIsLikedUser] = useState<boolean>(false);
 
   const { triggerRefetch, refetch } = useBlogContext();
+
   const userID = document.cookie
     .split("; ")
     .find((row) => row.startsWith("userId"))
@@ -120,9 +124,20 @@ export default function BlogDetail({ id }: BlogIdProps) {
         {/* Header Section */}
         <header className="mb-8">
           <div className="mb-6">
-            <Badge variant="secondary" className="mb-4">
-              Blog Post
-            </Badge>
+            <div className="flex justify-between items-center">
+              <Badge variant="secondary" className="mb-4">
+                Blog Post
+              </Badge>
+              {blogPost?.userId === userID && (
+                <Link href={`/blogs/editBlogs/${blogPost?._id}`}>
+                  <Button>
+                    <Pencil />
+                    Edit Post
+                  </Button>
+                </Link>
+              )}
+            </div>
+
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
               {blogPost?.title}
             </h1>
@@ -137,7 +152,7 @@ export default function BlogDetail({ id }: BlogIdProps) {
             <div className="flex items-center gap-4 mb-8">
               <Avatar className="h-12 w-12">
                 <AvatarImage
-                  src="/placeholder.svg"
+                  src={blogPost?.pictureUrl}
                   alt={`${blogPost?.firstName} ${blogPost?.lastName}`}
                 />
                 <AvatarFallback>
@@ -172,7 +187,7 @@ export default function BlogDetail({ id }: BlogIdProps) {
               src={blogPost?.imageUrl || "/placeholder.svg"}
               alt={blogPost?.title || ""}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
           </div>
@@ -225,7 +240,7 @@ export default function BlogDetail({ id }: BlogIdProps) {
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
                 <AvatarImage
-                  src="/placeholder.svg"
+                  src={blogPost?.pictureUrl}
                   alt={`${
                     (blogPost?.firstName || "", blogPost?.lastName || "")
                   }`}

@@ -4,6 +4,7 @@ import { FormDataType } from "@/app/(main)/blogs/model";
 import { LoginFormValue } from "@/components/forms/Login";
 import { RegisterFormValue } from "@/components/forms/Registration";
 import blogApiClient from "@/config/apiConfig";
+import { EditUserType } from "@/types/userTypes";
 import { AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -66,7 +67,7 @@ export async function logoutApiAction() {
 
   // Optional: delay or do cleanup if needed
 
-  redirect("/login");
+  redirect("/");
 }
 
 export const registerApiAction = async (validatedData: RegisterFormValue) => {
@@ -122,6 +123,19 @@ export const GetUserDetailById = async (id: string) => {
   } catch (error) {
     console.error("error");
     return { success: false, data: "User not found" };
+  }
+};
+
+export const EditUserDetail = async (id: string, values: EditUserType) => {
+  try {
+    const response = await blogApiClient.put(`/${id}/EditProfile`, values);
+
+    if (response?.status === 200) {
+      return { success: true, data: "Detail Edit" };
+    }
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: "CouldNot Edit " };
   }
 };
 export const AddPostApi = async (value: FormDataType) => {
@@ -224,6 +238,19 @@ export const GetAllSavedPost = async () => {
   } catch (error) {
     console.error("Error", error);
     return { success: false, data: "Could not Get Saved Post" };
+  }
+};
+
+export const UpdateBlogs = async (id: string, values: FormDataType) => {
+  console.log(values);
+  try {
+    const response = await blogApiClient.put(`/${id}/editPost`, values);
+    if (response.status === 200) {
+      return { success: true, data: "Updated Post" };
+    }
+  } catch (error) {
+    console.log("Error", error);
+    return { success: false, data: "Could Not Update Post" };
   }
 };
 

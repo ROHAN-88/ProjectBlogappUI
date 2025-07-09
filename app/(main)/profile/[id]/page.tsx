@@ -128,14 +128,16 @@ export default function ProfilePage({
             <h1 className="text-2xl font-semibold">{profileUser.fullName}</h1>
 
             {decodeURIComponent(isUserProfile || "") === profileUser.email ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Settings className="h-4 w-4" />
-                Edit Profile
-              </Button>
+              <Link href={`/editProfile`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Settings className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+              </Link>
             ) : (
               <div className="flex gap-2">
                 <Button size="sm">Follow</Button>
@@ -148,7 +150,7 @@ export default function ProfilePage({
 
           <div className="flex justify-center md:justify-start gap-6 mb-4">
             <div className="text-center">
-              <span className="font-semibold">11</span>
+              <span className="font-semibold">{posts.length}</span>
               <p className="text-sm text-muted-foreground">posts</p>
             </div>
             {/* <div className="text-center">

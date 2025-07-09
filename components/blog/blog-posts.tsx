@@ -57,7 +57,7 @@ export default function BlogPosts() {
       {workplacePost && (
         <Link href={`/blogs/${workplacePost._id}`}>
           <section className="mb-12">
-            <div className="relative overflow-hidden rounded-lg bg-card">
+            <div className="relative overflow-hidden rounded-lg bg-card group">
               <div className="aspect-[21/9] relative">
                 <Image
                   src={workplacePost.imageUrl || "/placeholder.svg"}
@@ -65,7 +65,9 @@ export default function BlogPosts() {
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+
+                {/* DARK OVERLAY WITH HOVER TRANSITION */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 group-hover:from-black/90" />
 
                 <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                   <Badge className="mb-4 bg-primary">

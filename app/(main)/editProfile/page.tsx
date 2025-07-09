@@ -2,6 +2,15 @@
 import { GetUserDetailById } from "@/utils/apiUtils";
 import { use, useEffect, useState } from "react";
 import EditProfileForm, { EditFormValue } from "./components/EditForm";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 const page = () => {
   const [userDetail, setUserDetail] = useState<EditFormValue>();
@@ -29,8 +38,21 @@ const page = () => {
   }, []);
   return (
     <>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild className="text-xl">
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-xl">Edit Profile</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <div
-        className="w-full flex justify-center  text-4xl mb-4"
+        className="w-full flex justify-center  text-4xl my-4"
         style={{ fontFamily: "Oswald" }}
       >
         Edit Profile

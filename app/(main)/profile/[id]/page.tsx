@@ -113,10 +113,11 @@ export default function ProfilePage({
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
-        <Avatar className="h-24 w-24 md:h-36 md:w-36">
+        <Avatar className="h-24 w-24 md:h-36 md:w-36 ">
           <AvatarImage
             src={profileUser.pictureUrl}
             alt={profileUser.fullName}
+            className="object-cover"
           />
           <AvatarFallback>
             {profileUser.fullName.substring(0, 2)}

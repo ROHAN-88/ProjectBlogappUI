@@ -4,19 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { BlogPost } from "@/types/blogPostType";
 import { formatDistanceToNow } from "date-fns";
-import Image from "next/image";
-import { useState } from "react";
 import DOMPurify from "dompurify";
+import Image from "next/image";
 type propsType = {
   data: BlogPost;
 };
 
 const BlogCard = ({ data }: propsType) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const hoverShadow =
-    "rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px, rgba(17, 17, 26, 0.1) 0px 24px 80px";
-
   const post = data;
   function stripHtmlTags(html: string): string {
     const div = document.createElement("div");
@@ -27,12 +21,7 @@ const BlogCard = ({ data }: propsType) => {
   return (
     <Card
       key={post._id}
-      className="overflow-hidden flex flex-col justify-center "
-      style={{
-        boxShadow: isHovered ? hoverShadow : "none",
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="overflow-hidden flex flex-col justify-center transition-shadow duration-300 rounded-xl hover:shadow-[rgba(50,50,93,0.25)_0px_30px_60px_-12px,_rgba(0,0,0,0.3)_0px_18px_36px_-18px] "
     >
       <CardContent className="space-y-4 pt-4">
         <div className="flex justify-between items-center h-[50px]">

@@ -2,15 +2,14 @@ import { useBlogContext } from "@/components/providers/BlogProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BlogPost, likeType } from "@/types/blogPostType";
-import DOMPurify from "dompurify";
+import { BlogPost } from "@/types/blogPostType";
 import {
   GetAllSavedPost,
   GetBlogById,
-  GetSavedPost,
   PostLike,
   PostSavedPost,
 } from "@/utils/apiUtils";
+import DOMPurify from "dompurify";
 import {
   Bookmark,
   Calendar,
@@ -20,12 +19,10 @@ import {
   User,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Comments from "./Comments";
-import Link from "next/link";
-import { profile } from "console";
-import { url } from "inspector";
 
 type BlogIdProps = {
   id: string;

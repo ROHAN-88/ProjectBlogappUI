@@ -34,9 +34,11 @@ const CategoryCarousel = ({ category, label, posts }: propsTypes) => {
           <Carousel orientation="horizontal">
             <CarouselContent>
               {renderPosts.map((post) => (
-                <CarouselItem key={post._id} className="basis-1/4">
+                <CarouselItem key={post._id} className="basis-1/4 ">
                   <Link href={`/blogs/${post._id}`}>
-                    <BlogCard data={post} />
+                    <div className="my-4">
+                      <BlogCard data={post} />
+                    </div>
                   </Link>
                 </CarouselItem>
               ))}

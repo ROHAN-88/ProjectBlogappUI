@@ -235,20 +235,22 @@ export default function BlogDetail({ id }: BlogIdProps) {
         <footer className="mt-12 pt-8 border-t">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src={blogPost?.pictureUrl}
-                  alt={`${
-                    (blogPost?.firstName || "", blogPost?.lastName || "")
-                  }`}
-                />
-                <AvatarFallback>
-                  {getAuthorInitials(
-                    blogPost?.firstName || "",
-                    blogPost?.lastName || ""
-                  )}
-                </AvatarFallback>
-              </Avatar>
+              <Link href={`/profile/${blogPost?.userId}`}>
+                <Avatar className="h-10 w-10">
+                  <AvatarImage
+                    src={blogPost?.pictureUrl}
+                    alt={`${
+                      (blogPost?.firstName || "", blogPost?.lastName || "")
+                    }`}
+                  />
+                  <AvatarFallback>
+                    {getAuthorInitials(
+                      blogPost?.firstName || "",
+                      blogPost?.lastName || ""
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <div>
                 <p className="font-medium">
                   {blogPost?.firstName} {blogPost?.lastName}

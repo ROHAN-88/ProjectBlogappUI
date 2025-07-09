@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Aperture, Hexagon } from "lucide-react";
+import { Aperture, Hexagon, SquarePen } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 export default function BlogPage() {
@@ -26,7 +26,10 @@ export default function BlogPage() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link href="/blogs">
-                  <Button variant="default">Create </Button>
+                  <Button variant="default">
+                    <SquarePen />
+                    Create{" "}
+                  </Button>
                 </Link>
               </TooltipTrigger>
               <TooltipContent>

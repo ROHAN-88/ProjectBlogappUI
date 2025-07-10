@@ -3,14 +3,8 @@
 import React, { use } from "react";
 import BlogDetail from "./components/blog-detail";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
-
-const Page = ({ params }: PageProps) => {
-  const { id } = params;
+const Page = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params);
   return <BlogDetail id={id} />;
 };
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthGuard } from "@/components/providers/auth-provider";
 import { Toaster } from "sonner";
 import { BlogProvider } from "@/components/providers/BlogProvider";
+import { SearchProvider } from "@/context/search-context";
 
 export default function RootLayout({
   children,
@@ -16,7 +17,9 @@ export default function RootLayout({
         <AuthGuard>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster />
-            <BlogProvider>{children}</BlogProvider>
+            <SearchProvider>
+              <BlogProvider>{children}</BlogProvider>
+            </SearchProvider>
           </ThemeProvider>
         </AuthGuard>
       </body>

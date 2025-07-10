@@ -1,18 +1,22 @@
 "use client";
 
-import { BlogPost } from "@/types/blogPostType";
+import type { BlogPost } from "@/types/blogPostType";
 import { GetAllPost } from "@/utils/apiUtils";
 import DOMPurify from "dompurify";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
 import CategoryCarousel from "./components/CarosouselCards";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
+import { useSearch } from "@/context/search-context";
+import { SearchResults } from "../search-result";
+
 export default function BlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const { searchQuery, selectedCategory } = useSearch();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -21,6 +25,7 @@ export default function BlogPosts() {
       day: "numeric",
     });
   };
+
   useEffect(() => {
     const getAllPosts = async () => {
       const postDetail = await GetAllPost();
@@ -52,6 +57,15 @@ export default function BlogPosts() {
     .sort(
       (a: any, b: any) => (b.likes?.length || 0) - (a.likes?.length || 0)
     )[0];
+
+  // Show search results if there's an active search or category filter
+  const showSearchResults = searchQuery.trim() || selectedCategory !== "all";
+
+  if (showSearchResults) {
+    return <SearchResults posts={posts} />;
+  }
+
+  // Original content when not searching
   return (
     <>
       {workplacePost && (
@@ -67,10 +81,8 @@ export default function BlogPosts() {
                   className="object-cover"
                   priority
                 />
-
                 {/* OVERLAY */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 group-hover:from-black/90" />
-
                 {/* CONTENT OVER IMAGE */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 text-white">
                   <Badge className="mb-3 sm:mb-4 bg-primary text-xs sm:text-sm">
@@ -85,7 +97,6 @@ export default function BlogPosts() {
                       .slice(0, 20)
                       .join(" ") + "..."}
                   </p>
-
                   {/* AUTHOR INFO */}
                   <div className="flex items-center space-x-3 sm:space-x-4">
                     <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-white">
@@ -117,28 +128,19 @@ export default function BlogPosts() {
       )}
 
       <CategoryCarousel category="recent" label="Recent" posts={posts} />
-
       <CategoryCarousel category="animal" label="Animal" posts={posts} />
-
       <CategoryCarousel category="food" label="Food" posts={posts} />
-
       <CategoryCarousel category="business" label="Business" posts={posts} />
-
       <CategoryCarousel
         category="entertainment"
         label="Entertainment"
         posts={posts}
       />
-
       <CategoryCarousel category="fashion" label="Fashion" posts={posts} />
       <CategoryCarousel category="fitness" label="Fitness" posts={posts} />
-
       <CategoryCarousel category="health" label="Health" posts={posts} />
-
       <CategoryCarousel category="sports" label="Sports" posts={posts} />
-
       <CategoryCarousel category="travel" label="Travel" posts={posts} />
-
       <CategoryCarousel category="other" label="Others" posts={posts} />
     </>
   );

@@ -58,45 +58,52 @@ export default function BlogPosts() {
         <Link href={`/blogs/${workplacePost._id}`}>
           <section className="mb-12">
             <div className="relative overflow-hidden rounded-lg bg-card group">
-              <div className="aspect-[21/9] relative">
+              {/* IMAGE CONTAINER */}
+              <div className="relative aspect-[21/9] sm:aspect-[16/7] md:aspect-[16/6] lg:aspect-[21/9]">
                 <Image
                   src={workplacePost.imageUrl || "/placeholder.svg"}
                   alt={workplacePost.title || ""}
                   fill
                   className="object-cover"
+                  priority
                 />
 
-                {/* DARK OVERLAY WITH HOVER TRANSITION */}
+                {/* OVERLAY */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-all duration-300 group-hover:from-black/90" />
 
-                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                  <Badge className="mb-4 bg-primary">
+                {/* CONTENT OVER IMAGE */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 text-white">
+                  <Badge className="mb-3 sm:mb-4 bg-primary text-xs sm:text-sm">
                     {workplacePost.category}
                   </Badge>
-                  <h2 className="text-4xl font-bold mb-4 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 leading-tight">
                     {workplacePost.title}
                   </h2>
-                  <p className="text-lg mb-6 text-gray-200 max-w-3xl">
+                  <p className="text-sm sm:text-base md:text-lg mb-4 sm:mb-6 text-gray-200 max-w-3xl line-clamp-3">
                     {stripHtmlTags(workplacePost.text)
                       .split(" ")
                       .slice(0, 20)
                       .join(" ") + "..."}
                   </p>
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-12 w-12 border-2 border-white">
+
+                  {/* AUTHOR INFO */}
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-white">
                       <AvatarImage
                         src={workplacePost.pictureUrl || "/placeholder.svg"}
                         alt={
                           workplacePost.firstName + " " + workplacePost.lastName
                         }
                       />
-                      <AvatarFallback>A</AvatarFallback>
+                      <AvatarFallback>
+                        {(workplacePost.firstName || "A").charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-sm sm:text-base">
                         {workplacePost.firstName + " " + workplacePost.lastName}
                       </p>
-                      <div className="flex items-center text-sm text-gray-300">
+                      <div className="flex items-center text-xs sm:text-sm text-gray-300">
                         <Calendar className="h-4 w-4 mr-1" />
                         {formatDate(workplacePost.createdAt || "")}
                       </div>
@@ -108,6 +115,7 @@ export default function BlogPosts() {
           </section>
         </Link>
       )}
+
       <CategoryCarousel category="recent" label="Recent" posts={posts} />
 
       <CategoryCarousel category="animal" label="Animal" posts={posts} />

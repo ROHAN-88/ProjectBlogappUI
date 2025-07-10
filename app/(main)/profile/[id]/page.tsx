@@ -291,7 +291,10 @@ export default function ProfilePage({
         <TabsContent value="saved" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {savedPosts.map((post) => (
-              <div className="relative aspect-square overflow-hidden rounded-md hover:opacity-90 transition-opacity">
+              <div
+                className="relative aspect-square overflow-hidden rounded-md hover:opacity-90 transition-opacity"
+                key={post._id}
+              >
                 <Card className="relative w-full h-full overflow-hidden group cursor-pointer rounded-xl">
                   {/* Background Image */}
                   <Image

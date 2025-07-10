@@ -34,7 +34,10 @@ const CategoryCarousel = ({ category, label, posts }: propsTypes) => {
           <Carousel orientation="horizontal">
             <CarouselContent>
               {renderPosts.map((post) => (
-                <CarouselItem key={post._id} className="basis-1/4 ">
+                <CarouselItem
+                  key={post._id}
+                  className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                >
                   <Link href={`/blogs/${post._id}`}>
                     <div className="my-4">
                       <BlogCard data={post} />
@@ -49,7 +52,9 @@ const CategoryCarousel = ({ category, label, posts }: propsTypes) => {
         </div>
       ) : (
         !isRecent && (
-          <div className="mt-10 text-center text-muted-foreground"></div>
+          <div className="mt-10 text-center text-muted-foreground">
+            No posts found.
+          </div>
         )
       )}
     </>

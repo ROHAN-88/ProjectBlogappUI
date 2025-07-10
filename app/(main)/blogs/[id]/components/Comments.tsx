@@ -57,33 +57,39 @@ const Comments = ({ blogData }: PropsType) => {
   };
   return (
     <div className="w-full">
-      <h2 className="mb-2 text-xl font-semibold">Comments</h2>
+      <h2 className="mb-4 text-xl font-semibold ">Comments</h2>
 
-      <div>
-        <h3 className="mb-4 font-medium">Activity</h3>
-        <div className="w-full">
-          <div className="mb-4 grid w-full grid-cols-4">
-            <h2>Comments</h2>
-          </div>
+      <div className="w-full">
+        <div>
+          <div className="w-full">
+            {/* Comment Input */}
+            <div className="flex flex-col sm:flex-row gap-3 items-start">
+              {/* Avatar */}
+              <Avatar className="w-10 h-10 border">
+                <AvatarImage
+                  src={profileUser?.pictureUrl}
+                  alt={profileUser?.fullName || "User"}
+                />
+                <AvatarFallback>
+                  {profileUser?.fullName?.[0] || "U"}
+                </AvatarFallback>
+              </Avatar>
 
-          <div className="flex gap-3">
-            <Avatar className="size-8">
-              <AvatarImage
-                src={profileUser?.pictureUrl}
-                alt={profileUser?.fullName || "User"}
-              />
-              <AvatarFallback>{"U"}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <ReactSimpleWysiwyg
-                value={commentValue}
-                onChange={handleChangeComments}
-              />
-              <div className="mt-2 flex items-center justify-end">
-                <Button onClick={() => handleSubmitComment(commentValue || "")}>
-                  <Send className="w-4 h-4 mr-1" />
-                  Post Comment
-                </Button>
+              {/* WYSIWYG & Button */}
+              <div className="flex-1 w-full">
+                <ReactSimpleWysiwyg
+                  value={commentValue}
+                  onChange={handleChangeComments}
+                />
+                <div className="mt-2 flex justify-end">
+                  <Button
+                    onClick={() => handleSubmitComment(commentValue || "")}
+                    className="flex items-center gap-1"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>Post Comment</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -136,19 +142,6 @@ const Comments = ({ blogData }: PropsType) => {
             </div>
           );
         })}
-
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Share</DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       </div>
     </div>
   );

@@ -134,6 +134,7 @@ const EditBlog = ({ defaultValues, id }: EditBlogProps) => {
                 <SelectGroup>
                   <SelectLabel>Category</SelectLabel>
                   <SelectItem value="entertainment">Entertainment</SelectItem>
+                  <SelectItem value="animal">Animal</SelectItem>
                   <SelectItem value="travel">Travel</SelectItem>
                   <SelectItem value="Food">Food</SelectItem>
                   <SelectItem value="fashion">Fashion</SelectItem>

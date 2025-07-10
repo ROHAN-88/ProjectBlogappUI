@@ -1,29 +1,22 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import logodark from "@/assets/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Home, PenSquare, User } from "lucide-react";
-import logoLight from "@/assets/logo-light.png";
-import logodark from "@/assets/logo-dark.png";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { GetUserDetail, logoutApiAction } from "@/utils/apiUtils";
 import { userTypes } from "@/types/userTypes";
+import { GetUserDetail, logoutApiAction } from "@/utils/apiUtils";
+import { Home, PenSquare } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 export function Navbar() {
@@ -78,6 +71,7 @@ export function Navbar() {
                   <span>Home</span>
                 </Link>
               </Button>
+
               <Button
                 variant={pathname === "/blog" ? "default" : "ghost"}
                 size="sm"

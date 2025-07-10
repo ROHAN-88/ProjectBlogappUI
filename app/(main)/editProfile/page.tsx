@@ -31,7 +31,7 @@ const page = () => {
           }
         }
       } catch (E) {
-        console.log("error", E);
+        console.error("error", E);
       }
     };
     getUserDetail();

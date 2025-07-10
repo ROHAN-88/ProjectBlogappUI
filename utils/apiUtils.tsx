@@ -10,7 +10,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const loginInApiAction = async (validateData: LoginFormValue) => {
-  console.log("api Login", validateData);
   const cookiesStores = await cookies();
   try {
     const response = await blogApiClient.post("/login", validateData);
@@ -193,6 +192,22 @@ export const GetPostByUId = async (id: string) => {
     return { success: false, data: "Could not get the Blog Detail" };
   }
 };
+
+export const DeleteComment = async (postId: string, commentId: string) => {
+  try {
+    const response = await blogApiClient.delete(
+      `/posts/${postId}/comments/${commentId}`
+    );
+
+    if (response.status === 200) {
+      return { success: true, data: "Comment Deleted" };
+    }
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: "Comments Deleted" };
+  }
+};
+
 export const PostSavedPost = async (id: string) => {
   try {
     const response = await blogApiClient.post(`/${id}/SavePost`);
@@ -242,7 +257,6 @@ export const GetAllSavedPost = async () => {
 };
 
 export const UpdateBlogs = async (id: string, values: FormDataType) => {
-  console.log(values);
   try {
     const response = await blogApiClient.put(`/${id}/editPost`, values);
     if (response.status === 200) {
@@ -266,7 +280,6 @@ export const PostLike = async (id: string) => {
 };
 
 export const PostComments = async (id: string, value: string) => {
-  console.log(id, value);
   try {
     const response = await blogApiClient.post(`/${id}/comments`, {
       text: value,

@@ -116,7 +116,6 @@ export default function EditProfileForm({ defaultValues, id }: propsType) {
           bio: values.bio,
           pictureUrl: pictureUrl,
         });
-        console.log("respons", response);
 
         if (response?.success === true) {
           toast("user Detail Edited");

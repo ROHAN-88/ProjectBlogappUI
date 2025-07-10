@@ -44,7 +44,7 @@ export default function ProfilePage({
   const [profileUser, setProfileUser] = useState<userTypes>();
   const [selectedPostId, setSelectedPostId] = useState("");
   const { triggerRefetch, refetch } = useBlogContext();
-  console.log(savedPosts);
+
   const isUserProfile = document.cookie
     .split("; ")
     .find((row) => row.startsWith("UserEmail"))
@@ -83,7 +83,7 @@ export default function ProfilePage({
           setPosts(response.data);
         }
       } catch (error) {
-        console.log("Error");
+        console.error("Error");
       }
     };
     userPostData();

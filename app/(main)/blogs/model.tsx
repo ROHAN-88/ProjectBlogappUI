@@ -8,6 +8,7 @@ export type CloudinaryResult = {
 };
 
 export type categoryType =
+  | "animal"
   | "recent"
   | "sports"
   | "entertainment"

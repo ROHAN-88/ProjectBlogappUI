@@ -2,19 +2,15 @@
 import { useBlogContext } from "@/components/providers/BlogProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { BlogPost } from "@/types/blogPostType";
 import { userTypes } from "@/types/userTypes";
-import { GetUserDetail, PostComments } from "@/utils/apiUtils";
+import { DeleteComment, GetUserDetail, PostComments } from "@/utils/apiUtils";
 import { formatDistanceToNow } from "date-fns";
-import { MoreHorizontal, Send } from "lucide-react";
+import DOMPurify from "dompurify";
+import { Send, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactSimpleWysiwyg, { ContentEditableEvent } from "react-simple-wysiwyg";
+import { toast } from "sonner";
 
 type PropsType = {
   blogData: BlogPost | undefined;
@@ -44,10 +40,19 @@ const Comments = ({ blogData }: PropsType) => {
     if (BlogPost?._id && commentValue != "") {
       const response = await PostComments(BlogPost?._id, value);
       if (response?.success === true) {
+        setCommentValue("");
         triggerRefetch();
       }
     } else {
       console.error("No Blog ID Found");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    const DeletComment = await DeleteComment(blogData?._id || "", commentId);
+    if (DeletComment?.success === true) {
+      triggerRefetch();
+      toast("Comment Deleted");
     }
   };
   return (
@@ -111,9 +116,22 @@ const Comments = ({ blogData }: PropsType) => {
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {item.text}
-                </p>
+                <div className="flex justify-between items-center">
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(item.text || " "),
+                    }}
+                    className="rounded p-2 text-justify"
+                  />
+
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDeleteComment(item._id)}
+                  >
+                    <Trash2 />
+                    Delete
+                  </Button>
+                </div>
               </div>
             </div>
           );

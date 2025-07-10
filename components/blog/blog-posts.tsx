@@ -110,6 +110,8 @@ export default function BlogPosts() {
       )}
       <CategoryCarousel category="recent" label="Recent" posts={posts} />
 
+      <CategoryCarousel category="animal" label="Animal" posts={posts} />
+
       <CategoryCarousel category="food" label="Food" posts={posts} />
 
       <CategoryCarousel category="business" label="Business" posts={posts} />
@@ -121,7 +123,6 @@ export default function BlogPosts() {
       />
 
       <CategoryCarousel category="fashion" label="Fashion" posts={posts} />
-
       <CategoryCarousel category="fitness" label="Fitness" posts={posts} />
 
       <CategoryCarousel category="health" label="Health" posts={posts} />
